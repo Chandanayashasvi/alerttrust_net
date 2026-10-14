@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block body %}
+<div class="card"><h2 style="margin-top:0">AlertTrust Investigation Report</h2><div class="mu">Generated {{gen}} (UTC) · {{rows|length}} records checked · <b style="color:{{'#f87171' if fails else '#4ade80'}}">{{fails|length}} failure(s)</b></div>
+<button class="noprint" onclick="print()">Print / save as PDF</button></div>
+{% if fails %}<div class="card tbl"><h3 style="margin-top:0">Records requiring investigation</h3><table><tr><th>Alert</th><th>Result</th><th>Failed checks</th><th>Stored hash</th></tr>
+{% for r in fails %}<tr><td>{{r.alert_id}} (#{{r.seq}})</td><td><span class="badge {{r.result}}">{{r.result}}</span></td>
+<td>{% for k,v in r.checks.items() if not v %}{{k}}<br>{% endfor %}</td><td><code>{{r.hash[:24]}}…</code></td></tr>{% endfor %}</table>
+<p class="mu">Recommended: preserve the database, compare against off-host backups, identify who had write access, and treat affected alerts as untrusted until re-validated against the original SIEM.</p></div>{% endif %}
+<div class="card tbl"><h3 style="margin-top:0">All records</h3><table><tr><th>#</th><th>Alert</th><th>Severity</th><th>Sealed</th><th>Result</th></tr>
+{% for r in rows %}<tr><td>{{r.seq}}</td><td>{{r.alert_id}}</td><td>{{r.p.severity}}</td><td>{{r.sealed_at}}</td><td><span class="badge {{r.result}}">{{r.result}}</span></td></tr>{% endfor %}</table></div>{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block body %}
+<div class="card"><div class="row"><h2 style="margin:0">{{r.alert_id}}</h2><span class="badge {{res}}">{{res}}</span><span class="mu">live check</span></div>
+<p class="mu" style="margin-bottom:0">{{p.rule}} · MITRE: {{p.mitre or 'n/a'}}</p></div>
+<div class="card tbl"><h3 style="margin-top:0">Alert data (current database content)</h3><table>
+{% for k,v in p.items() %}<tr><th style="width:140px">{{k}}</th><td class="{{v if k=='severity'}}">{{v}}</td></tr>{% endfor %}</table></div>
+<div class="card"><h3 style="margin-top:0">Integrity checks</h3>
+{% for k,v in checks.items() %}<div>{{'✅' if v else '❌'}} {{k}}</div>{% endfor %}
+<hr style="border-color:var(--bd)"><div class="mu">Sealed at {{r.sealed_at}} · seq #{{r.seq}}</div>
+<div>Stored SHA-256 &nbsp;&nbsp;&nbsp;<code>{{r.hash}}</code></div><div>Recomputed SHA-256 <code>{{recomputed}}</code></div>
+<div>Previous hash &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>{{r.prev_hash}}</code></div><div>RSA-PSS signature <code>{{r.signature[:96]}}…</code></div>
+<form method="post" action="/alert/{{r.alert_id}}/verify" style="margin-top:10px"><button>Re-verify &amp; log</button></form></div>
+<div class="card"><h3 style="margin-top:0">Triage</h3><form method="post" action="/alert/{{r.alert_id}}/status" class="row">
+<select name="status">{% for s in ['New','Investigating','Integrity Review','Escalated','False Positive','Closed'] %}<option {{'selected' if s==r.status}}>{{s}}</option>{% endfor %}</select><button>Update status</button></form></div>
+<div class="card noprint"><h3 style="margin-top:0">⚠ Attack simulation (demo only)</h3><p class="mu">Simulates an attacker changing the database directly, bypassing the sealing process.</p>
+<div class="row"><form method="post" action="/alert/{{r.alert_id}}/tamper" class="row"><select name="severity">{% for s in sevs %}<option>{{s}}</option>{% endfor %}</select><button class="d">Tamper severity</button></form>
+<form method="post" action="/alert/{{r.alert_id}}/delete"><button class="d">Delete record</button></form></div></div>
+<div class="card tbl"><h3 style="margin-top:0">Verification history</h3><table>{% for l in log %}<tr><td>{{l.at}}</td><td><span class="badge {{l.result}}">{{l.result}}</span></td></tr>{% else %}<tr><td class="mu">Never verified</td></tr>{% endfor %}</table></div>{% endblock %}

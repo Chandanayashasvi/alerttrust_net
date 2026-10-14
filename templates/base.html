@@ -1,0 +1,20 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AlertTrust-Net</title><style>
+:root{--bg:#0f1419;--card:#1a2230;--bd:#2a3547;--tx:#e6edf3;--mu:#8b9bb0;--ac:#3b82f6}
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--tx)}
+header{display:flex;gap:20px;align-items:center;padding:14px 24px;border-bottom:1px solid var(--bd);background:var(--card)}
+header b{font-size:18px}header a{color:var(--mu);text-decoration:none}header a:hover{color:var(--tx)}
+main{max-width:1200px;margin:20px auto;padding:0 20px}.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.stat b{font-size:26px;display:block}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--bd);vertical-align:top}th{color:var(--mu);font-weight:500}
+.tbl{overflow-x:auto}.badge{padding:2px 8px;border-radius:10px;font-size:12px;font-weight:600;white-space:nowrap}
+.VERIFIED{background:#12351f;color:#4ade80}.TAMPERED,.INVALID_SIGNATURE,.CHAIN_BROKEN{background:#3b1518;color:#f87171}.NOT_VERIFIED{background:#2a3547;color:var(--mu)}
+.Critical{color:#f87171}.High{color:#fb923c}.Medium{color:#facc15}.Low{color:#60a5fa}
+button,select,input{background:#0f1419;color:var(--tx);border:1px solid var(--bd);border-radius:6px;padding:7px 12px;font:inherit}
+button{background:var(--ac);border-color:var(--ac);cursor:pointer}button.d{background:#7f1d1d;border-color:#7f1d1d}button.g{background:transparent;border-color:var(--bd)}
+.flash{background:#1e3a5f;border:1px solid var(--ac);padding:10px 14px;border-radius:6px;margin-bottom:14px}
+code{font:12px ui-monospace,monospace;word-break:break-all;color:#a5b4fc}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.mu{color:var(--mu)}
+@media print{body{background:#fff;color:#000}.card{border-color:#999;background:#fff}header,.noprint{display:none}code{color:#000}}
+</style>{% if live %}<meta http-equiv="refresh" content="5">{% endif %}</head><body>
+<header><b>🛡️ AlertTrust-Net</b><a href="/">Dashboard</a><a href="/report">Investigation report</a><a href="/export.csv">Export CSV</a></header>
+<main>{% for m in get_flashed_messages() %}<div class="flash">{{m}}</div>{% endfor %}{% block body %}{% endblock %}</main></body></html>

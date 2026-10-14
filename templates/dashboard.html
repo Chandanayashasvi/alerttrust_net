@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block body %}
+<div class="grid" style="margin-bottom:16px">
+ <div class="card stat"><span class="mu">Total sealed records</span><b>{{total}}</b></div>
+ <div class="card stat"><span class="mu">Verified</span><b style="color:#4ade80">{{stats.VERIFIED}}</b></div>
+ <div class="card stat"><span class="mu">Integrity failures</span><b style="color:#f87171">{{stats.TAMPERED+stats.INVALID_SIGNATURE+stats.CHAIN_BROKEN}}</b></div>
+ <div class="card stat"><span class="mu">Not yet verified</span><b>{{stats.NOT_VERIFIED}}</b></div></div>
+<div class="card row noprint">
+ <form method="post" action="/ingest" enctype="multipart/form-data" class="row"><input type="file" name="file" accept=".json,.csv"><button>Import &amp; seal logs</button>
+  <span class="mu">(no file = load 40 sample network events)</span></form>
+ <form method="post" action="/verify"><button class="g">✔ Verify all</button></form></div>
+<div class="card" style="border-color:{{'#2a3547' if anchor[0] else '#f87171'}}"><b>🔗 External anchor check:</b> <span class="badge {{'VERIFIED' if anchor[0] else 'TAMPERED'}}">{{'OK' if anchor[0] else 'FAILED'}}</span> <span class="mu">{{anchor[1]}}</span></div>
+{% if incidents %}<div class="card tbl"><h3 style="margin-top:0">🚨 Integrity incidents</h3><table>{% for i in incidents %}<tr><td>{{i.at}}</td><td>{{i.kind}}</td><td>{{i.alert_id}}</td><td class="mu">{{i.details}}</td></tr>{% endfor %}</table></div>{% endif %}
+<form class="card row noprint" method="get"><input name="q" placeholder="Search host, IP, user, rule…" value="{{q}}" size="28">
+ <select name="severity"><option value="">All severities</option>{% for s in sevs %}<option {{'selected' if s==sev}}>{{s}}</option>{% endfor %}</select>
+ <select name="result"><option value="">All results</option>{% for s in ['VERIFIED','TAMPERED','INVALID_SIGNATURE','CHAIN_BROKEN','NOT_VERIFIED'] %}<option {{'selected' if s==res}}>{{s}}</option>{% endfor %}</select>
+ <label class="mu"><input type="checkbox" name="live" value="1" {{'checked' if live}}> Live refresh (5s)</label><button class="g">Filter</button></form>
+<div class="card tbl"><table><tr><th>#</th><th>Event</th><th>Severity</th><th>Rule</th><th>Sensor</th><th>Source</th><th>Destination</th><th>Proto</th><th>Status</th><th>Integrity</th></tr>
+{% for r in rows %}<tr><td>{{r.seq}}</td><td><a style="color:#93c5fd" href="/alert/{{r.alert_id}}">{{r.alert_id}}</a></td>
+<td class="{{r.p.severity}}">{{r.p.severity}}</td><td>{{r.p.rule}}</td><td>{{r.p.host}}</td><td>{{r.p.src_ip}}</td><td>{{r.p.dst_ip}}{{(':'+r.p.dst_port) if r.p.dst_port and r.p.dst_port!='0' else ''}}</td><td>{{r.p.protocol}}</td><td>{{r.status}}</td>
+<td><span class="badge {{r.result}}">{{r.result}}</span></td></tr>
+{% else %}<tr><td colspan="10" class="mu">No records yet. Start the collector and an agent, import a file, or load the sample set.</td></tr>{% endfor %}</table></div>{% endblock %}
